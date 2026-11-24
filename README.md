@@ -35,7 +35,9 @@ commit in `rust/tenferro_sci_ffi/Cargo.toml`.
 ## Installation
 
 Julia 1.12 or later is required (RustCall.jl uses Julia's `@rust_crate`
-precompilation support). A Rust toolchain is not required on `PATH`:
+precompilation support). RustCall.jl 0.10.2 or later is required: it is the
+first release whose generated wrappers carry the Clippy allow that keeps
+`cargo clippy -D warnings` clean. A Rust toolchain is not required on `PATH`:
 RustCall.jl installs one through Julia artifacts when needed.
 
 ```julia
@@ -158,11 +160,10 @@ function: an `extern "C"` entry point needs concrete types. The wrapper crate
 therefore instantiates each function twice, once for `f64` and once for
 `xprec::Df64`.
 
-RustCall's FFI contract does not return a `#[julia]` struct by value, so the
-double-double functions take a `&mut Dd` out-parameter. The Julia wrapper
-allocates one `Dd` handle per call, reads `hi` and `lo`, and lets the handle be
-collected. Each `Df64` call therefore performs one Rust allocation; the
-arithmetic itself dominates.
+The double-double functions return an owned `Dd` with
+`#[rustcall_owned_return(Dd)]`; the Julia wrapper reads `hi` and `lo` and lets
+the handle be collected. Each `Df64` call therefore performs one Rust
+allocation; the arithmetic itself dominates.
 
 The generated low-level module is available as `TenferroSci.Bindings` — for
 example `TenferroSci.Bindings.gamma(2.5)` calls the raw `f64` binding without

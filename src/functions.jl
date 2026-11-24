@@ -7,17 +7,9 @@
 # would be silently rounded to 53 bits. Use `Df64` for about 32 digits.
 const F64Input = Union{Float16,Float32,Float64,Integer,Rational,Irrational}
 
-@inline function _dd1(f, x::Df64)
-    out = Bindings.Dd(0.0, 0.0)
-    f(x.hi, x.lo, out)
-    return unpack_dd(out)
-end
+@inline _dd1(f, x::Df64) = unpack_dd(f(x.hi, x.lo))
 
-@inline function _dd2(f, x::Df64, y::Df64)
-    out = Bindings.Dd(0.0, 0.0)
-    f(x.hi, x.lo, y.hi, y.lo, out)
-    return unpack_dd(out)
-end
+@inline _dd2(f, x::Df64, y::Df64) = unpack_dd(f(x.hi, x.lo, y.hi, y.lo))
 
 """
     gamma(x)

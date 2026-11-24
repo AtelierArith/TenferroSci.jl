@@ -6,19 +6,12 @@
 //! `xprec::Df64`.
 //!
 //! * `f(...)` takes and returns `f64` and calls the xsf port.
-//! * `f_dd(hi, lo, ..., out)` takes the double-double arguments as
-//!   `hi + lo` pairs of `f64` and writes the double-double result into
-//!   `out: &mut Dd`, calling the precision-adaptive path. A return slot is
-//!   used because RustCall's FFI contract does not pass a `#[julia]` struct
-//!   back by value.
+//! * `f_dd(hi, lo, ...)` takes the double-double arguments as `hi + lo` pairs
+//!   of `f64` and returns an owned [`Dd`] (`#[rustcall_owned_return(Dd)]`),
+//!   calling the precision-adaptive path.
 //!
 //! Values follow `specials`' contract: domain errors and overflow are
 //! returned as NaN or ±∞, with no error flag.
-
-// The `#[julia]` macro generates public `extern "C"` entry points that
-// dereference their raw-pointer arguments. Those wrappers are generated code;
-// the hand-written functions below take no raw pointers.
-#![allow(clippy::not_unsafe_ptr_arg_deref)]
 
 use rustcall_julia_macros::julia;
 use xprec::Df64;
@@ -34,20 +27,12 @@ pub struct Dd {
     pub lo: f64,
 }
 
-#[julia]
 impl Dd {
-    /// Construct the double-double `hi + lo`.
-    #[julia]
-    pub fn new(hi: f64, lo: f64) -> Self {
-        Dd { hi, lo }
-    }
-}
-
-impl Dd {
-    /// Write a double-double result through the `&mut Dd` return slot.
-    fn set(&mut self, x: Df64) {
-        self.hi = x.hi();
-        self.lo = x.lo();
+    fn from_df64(x: Df64) -> Self {
+        Dd {
+            hi: x.hi(),
+            lo: x.lo(),
+        }
     }
 }
 
@@ -71,8 +56,9 @@ pub fn gamma(x: f64) -> f64 {
 }
 
 #[julia]
-pub fn gamma_dd(hi: f64, lo: f64, out: &mut Dd) {
-    out.set(specials::gamma(df64(hi, lo)));
+#[rustcall_owned_return(Dd)]
+pub fn gamma_dd(hi: f64, lo: f64) -> Dd {
+    Dd::from_df64(specials::gamma(df64(hi, lo)))
 }
 
 #[julia]
@@ -81,8 +67,9 @@ pub fn lgamma(x: f64) -> f64 {
 }
 
 #[julia]
-pub fn lgamma_dd(hi: f64, lo: f64, out: &mut Dd) {
-    out.set(specials::lgamma(df64(hi, lo)));
+#[rustcall_owned_return(Dd)]
+pub fn lgamma_dd(hi: f64, lo: f64) -> Dd {
+    Dd::from_df64(specials::lgamma(df64(hi, lo)))
 }
 
 #[julia]
@@ -91,8 +78,9 @@ pub fn gammasgn(x: f64) -> f64 {
 }
 
 #[julia]
-pub fn gammasgn_dd(hi: f64, lo: f64, out: &mut Dd) {
-    out.set(specials::gammasgn(df64(hi, lo)));
+#[rustcall_owned_return(Dd)]
+pub fn gammasgn_dd(hi: f64, lo: f64) -> Dd {
+    Dd::from_df64(specials::gammasgn(df64(hi, lo)))
 }
 
 #[julia]
@@ -101,8 +89,9 @@ pub fn rgamma(x: f64) -> f64 {
 }
 
 #[julia]
-pub fn rgamma_dd(hi: f64, lo: f64, out: &mut Dd) {
-    out.set(specials::rgamma(df64(hi, lo)));
+#[rustcall_owned_return(Dd)]
+pub fn rgamma_dd(hi: f64, lo: f64) -> Dd {
+    Dd::from_df64(specials::rgamma(df64(hi, lo)))
 }
 
 #[julia]
@@ -111,8 +100,9 @@ pub fn digamma(x: f64) -> f64 {
 }
 
 #[julia]
-pub fn digamma_dd(hi: f64, lo: f64, out: &mut Dd) {
-    out.set(specials::digamma(df64(hi, lo)));
+#[rustcall_owned_return(Dd)]
+pub fn digamma_dd(hi: f64, lo: f64) -> Dd {
+    Dd::from_df64(specials::digamma(df64(hi, lo)))
 }
 
 #[julia]
@@ -121,8 +111,9 @@ pub fn zetac(x: f64) -> f64 {
 }
 
 #[julia]
-pub fn zetac_dd(hi: f64, lo: f64, out: &mut Dd) {
-    out.set(specials::zetac(df64(hi, lo)));
+#[rustcall_owned_return(Dd)]
+pub fn zetac_dd(hi: f64, lo: f64) -> Dd {
+    Dd::from_df64(specials::zetac(df64(hi, lo)))
 }
 
 #[julia]
@@ -131,8 +122,9 @@ pub fn trigamma(x: f64) -> f64 {
 }
 
 #[julia]
-pub fn trigamma_dd(hi: f64, lo: f64, out: &mut Dd) {
-    out.set(specials::trigamma(df64(hi, lo)));
+#[rustcall_owned_return(Dd)]
+pub fn trigamma_dd(hi: f64, lo: f64) -> Dd {
+    Dd::from_df64(specials::trigamma(df64(hi, lo)))
 }
 
 #[julia]
@@ -141,8 +133,9 @@ pub fn digammainv(y: f64) -> f64 {
 }
 
 #[julia]
-pub fn digammainv_dd(hi: f64, lo: f64, out: &mut Dd) {
-    out.set(specials::digammainv(df64(hi, lo)));
+#[rustcall_owned_return(Dd)]
+pub fn digammainv_dd(hi: f64, lo: f64) -> Dd {
+    Dd::from_df64(specials::digammainv(df64(hi, lo)))
 }
 
 #[julia]
@@ -151,8 +144,9 @@ pub fn lgam1p(x: f64) -> f64 {
 }
 
 #[julia]
-pub fn lgam1p_dd(hi: f64, lo: f64, out: &mut Dd) {
-    out.set(specials::lgam1p(df64(hi, lo)));
+#[rustcall_owned_return(Dd)]
+pub fn lgam1p_dd(hi: f64, lo: f64) -> Dd {
+    Dd::from_df64(specials::lgam1p(df64(hi, lo)))
 }
 
 // ---------------------------------------------------------------------------
@@ -165,8 +159,9 @@ pub fn zeta(s: f64, q: f64) -> f64 {
 }
 
 #[julia]
-pub fn zeta_dd(s_hi: f64, s_lo: f64, q_hi: f64, q_lo: f64, out: &mut Dd) {
-    out.set(specials::zeta(df64(s_hi, s_lo), df64(q_hi, q_lo)));
+#[rustcall_owned_return(Dd)]
+pub fn zeta_dd(s_hi: f64, s_lo: f64, q_hi: f64, q_lo: f64) -> Dd {
+    Dd::from_df64(specials::zeta(df64(s_hi, s_lo), df64(q_hi, q_lo)))
 }
 
 #[julia]
@@ -175,8 +170,9 @@ pub fn beta(a: f64, b: f64) -> f64 {
 }
 
 #[julia]
-pub fn beta_dd(a_hi: f64, a_lo: f64, b_hi: f64, b_lo: f64, out: &mut Dd) {
-    out.set(specials::beta(df64(a_hi, a_lo), df64(b_hi, b_lo)));
+#[rustcall_owned_return(Dd)]
+pub fn beta_dd(a_hi: f64, a_lo: f64, b_hi: f64, b_lo: f64) -> Dd {
+    Dd::from_df64(specials::beta(df64(a_hi, a_lo), df64(b_hi, b_lo)))
 }
 
 #[julia]
@@ -185,8 +181,9 @@ pub fn lbeta(a: f64, b: f64) -> f64 {
 }
 
 #[julia]
-pub fn lbeta_dd(a_hi: f64, a_lo: f64, b_hi: f64, b_lo: f64, out: &mut Dd) {
-    out.set(specials::lbeta(df64(a_hi, a_lo), df64(b_hi, b_lo)));
+#[rustcall_owned_return(Dd)]
+pub fn lbeta_dd(a_hi: f64, a_lo: f64, b_hi: f64, b_lo: f64) -> Dd {
+    Dd::from_df64(specials::lbeta(df64(a_hi, a_lo), df64(b_hi, b_lo)))
 }
 
 #[julia]
@@ -195,8 +192,9 @@ pub fn poch(a: f64, m: f64) -> f64 {
 }
 
 #[julia]
-pub fn poch_dd(a_hi: f64, a_lo: f64, m_hi: f64, m_lo: f64, out: &mut Dd) {
-    out.set(specials::poch(df64(a_hi, a_lo), df64(m_hi, m_lo)));
+#[rustcall_owned_return(Dd)]
+pub fn poch_dd(a_hi: f64, a_lo: f64, m_hi: f64, m_lo: f64) -> Dd {
+    Dd::from_df64(specials::poch(df64(a_hi, a_lo), df64(m_hi, m_lo)))
 }
 
 #[julia]
@@ -205,8 +203,9 @@ pub fn binom(n: f64, k: f64) -> f64 {
 }
 
 #[julia]
-pub fn binom_dd(n_hi: f64, n_lo: f64, k_hi: f64, k_lo: f64, out: &mut Dd) {
-    out.set(specials::binom(df64(n_hi, n_lo), df64(k_hi, k_lo)));
+#[rustcall_owned_return(Dd)]
+pub fn binom_dd(n_hi: f64, n_lo: f64, k_hi: f64, k_lo: f64) -> Dd {
+    Dd::from_df64(specials::binom(df64(n_hi, n_lo), df64(k_hi, k_lo)))
 }
 
 #[julia]
@@ -215,8 +214,9 @@ pub fn gen_harmonic(n: f64, a: f64) -> f64 {
 }
 
 #[julia]
-pub fn gen_harmonic_dd(n_hi: f64, n_lo: f64, a_hi: f64, a_lo: f64, out: &mut Dd) {
-    out.set(specials::gen_harmonic(df64(n_hi, n_lo), df64(a_hi, a_lo)));
+#[rustcall_owned_return(Dd)]
+pub fn gen_harmonic_dd(n_hi: f64, n_lo: f64, a_hi: f64, a_lo: f64) -> Dd {
+    Dd::from_df64(specials::gen_harmonic(df64(n_hi, n_lo), df64(a_hi, a_lo)))
 }
 
 #[julia]
@@ -225,6 +225,7 @@ pub fn stirling2(n: f64, k: f64) -> f64 {
 }
 
 #[julia]
-pub fn stirling2_dd(n_hi: f64, n_lo: f64, k_hi: f64, k_lo: f64, out: &mut Dd) {
-    out.set(specials::stirling2(df64(n_hi, n_lo), df64(k_hi, k_lo)));
+#[rustcall_owned_return(Dd)]
+pub fn stirling2_dd(n_hi: f64, n_lo: f64, k_hi: f64, k_lo: f64) -> Dd {
+    Dd::from_df64(specials::stirling2(df64(n_hi, n_lo), df64(k_hi, k_lo)))
 }

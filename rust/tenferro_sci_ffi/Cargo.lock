@@ -122,9 +122,9 @@ dependencies = [
 
 [[package]]
 name = "rustcall_julia_core"
-version = "0.7.0"
+version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b617c361b25a456be2518f2b54df1760bf8611d0717b7e3926d9527ee4163910"
+checksum = "4eb211c94183a3855f042d0fd67b20d913903dfbc9946ab7424e924b178b1558"
 dependencies = [
  "prettyplease",
  "proc-macro2",
@@ -137,18 +137,18 @@ dependencies = [
 
 [[package]]
 name = "rustcall_julia_macros"
-version = "0.7.0"
+version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "50dc0e26b0aacbd223fa9679faa83d29a9a889372659c4b448c831d98cfb8f42"
+checksum = "c0da6fc19ff882647393068fae562c985b42bb1d42bc0ee0b5ad7746ed3d47c5"
 dependencies = [
  "rustcall_julia_macros_impl",
 ]
 
 [[package]]
 name = "rustcall_julia_macros_impl"
-version = "0.7.0"
+version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6a698dfa330e8f167d9371893098c741a62b564c41c2a8be1f55fa09b8a50507"
+checksum = "3f728e754419aca08e1efa3b0b19d15608ed9350ac40b410a91a9ddb53f0b312"
 dependencies = [
  "proc-macro2",
  "quote",

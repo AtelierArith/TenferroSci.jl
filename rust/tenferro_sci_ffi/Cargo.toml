@@ -10,7 +10,7 @@ publish = false
 crate-type = ["cdylib"]
 
 [dependencies]
-rustcall_julia_macros = "0.7"
+rustcall_julia_macros = "0.7.1"
 # Unpublished: pin the exact upstream commit so that the Julia package and the
 # reference tests in tenferro-sci-rs speak about the same code.
 specials = { git = "https://github.com/tensor4all/tenferro-sci-rs", rev = "7691f7c9b79853fd7fe45f6d2e113aae36d73e64" }
