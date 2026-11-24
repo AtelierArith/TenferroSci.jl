@@ -1,0 +1,19 @@
+name = "TenferroSci"
+uuid = "c39c0410-c6c8-43e3-b470-5f4dbe3fdd1f"
+authors = ["Satoshi Terasaki <terasakisatoshi.math@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+MultiFloats = "bdf0d083-296b-4888-a5b6-7498122e68a5"
+RustCall = "7ac5b1a4-9e37-4f0e-9aa3-3305a66bfb1c"
+
+[compat]
+MultiFloats = "3"
+RustCall = "0.10"
+julia = "1.12"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]

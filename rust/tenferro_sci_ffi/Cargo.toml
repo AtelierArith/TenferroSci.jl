@@ -1,0 +1,17 @@
+[package]
+name = "tenferro_sci_ffi"
+version = "0.1.0"
+edition = "2021"
+description = "Julia-facing FFI wrappers for the specials crate of tenferro-sci-rs"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+rustcall_julia_macros = "0.7"
+# Unpublished: pin the exact upstream commit so that the Julia package and the
+# reference tests in tenferro-sci-rs speak about the same code.
+specials = { git = "https://github.com/tensor4all/tenferro-sci-rs", rev = "7691f7c9b79853fd7fe45f6d2e113aae36d73e64" }
+xprec = "0.2.3"
